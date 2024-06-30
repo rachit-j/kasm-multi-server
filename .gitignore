@@ -1,3 +1,4 @@
 backup/
 *.tar.gz
 *.tar
+*.pem
