@@ -5,6 +5,10 @@
 
 # Installation
 
+## Cloning
+
+Git clone the repository and download the latest Kasm image to `roles/install_common/files`
+
 ## Installing Ansible and AWS CLI
 
 To install Ansible and AWS CLI, run the following commands:
