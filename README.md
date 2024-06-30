@@ -1,4 +1,4 @@
-# Key Notes
+# Multi-Server Installation
 
 - Used Ansible instead of Terraform
 - Everything is automated except for some SSH steps
