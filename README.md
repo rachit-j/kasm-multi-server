@@ -1,4 +1,131 @@
-# Ansible
+# Key Notes
+
+- Used Ansible instead of Terraform
+- Everything is automated except for some SSH steps
+
+# Installation
+
+## Installing Ansible and AWS CLI
+
+To install Ansible and AWS CLI, run the following commands:
+
+```sh
+sudo apt-get update
+sudo apt-get install ansible -y
+sudo apt-get install awscli -y
+```
+
+## Generating AWS SSH Keys
+
+Generate your SSH key pair using the AWS Management Console or the AWS CLI:
+
+```sh
+aws ec2 create-key-pair --key-name rachit-j-key --query 'KeyMaterial' --output text > rachit-j-key.pem
+chmod 400 rachit-j-key.pem
+```
+
+## Provisioning Instances
+
+In `provision.yml`, you can configure each instance you need and automatically start them. Below is a sample configuration:
+
+```yml
+- name: Launch EC2 database instance
+  amazon.aws.ec2_instance:
+    key_name: rachit-j-key
+    instance_type: t2.micro
+    image_id: ami-08012c0a9ee8e21c4
+    wait: yes
+    region: us-west-1
+    count: 1
+    volumes:
+      - device_name: /dev/xvda
+        ebs:
+          volume_size: 20  # Specify the desired volume size in GB
+    tags:
+      Name: KasmDBServer
+  register: ec2_db
+```
+
+### Explanation of Parameters:
+- `key_name`: The name of the SSH key pair.
+- `instance_type`: The type of EC2 instance.
+- `image_id`: The AMI ID to use for the instance.
+- `wait`: Whether to wait for the instance to be in a running state.
+- `region`: The AWS region to launch the instance.
+- `count`: The number of instances to launch.
+- `volumes`: Configuration for the instance's volumes.
+- `tags`: Tags to assign to the instance.
+
+Run the playbook to provision the instances:
+
+```sh
+ansible-playbook -i inventory provision.yml
+```
+
+## Configuring the Configuration File (`inventory`)
+
+Each parameter in the `inventory` file must be configured with the public IP addresses of the instances:
+
+```yml
+##################
+# Host inventory #
+##################
+all:
+  children:
+    zone1:
+      children:
+        zone1_db:
+          hosts:
+            zone1_db_1:
+              ansible_host: <public_ip>
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: rachit-j-key.pem
+        # Add similar configurations for web, agent, and guac
+```
+
+## SSH Connect and Run Commands
+
+Connect to each instance using SSH and run the following commands to install Docker:
+
+```sh
+ssh -i rachit-j-key.pem ubuntu@<public_ip>
+```
+
+```sh
+# Add Docker's official GPG key:
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+```
+
+```sh
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo apt-get install docker-compose -y
+```
+
+## Running Everything
+
+Finally, run the Ansible playbooks and make sure to check the output and save passwords if not already defined:
+
+```sh
+ansible-playbook -i inventory install_kasm.yml
+```
+
+Ensure all services are running and properly configured.
+
+# OLD README
+
+## Ansible
 
 ### Installing Ansible
 
