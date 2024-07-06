@@ -4,11 +4,11 @@
   tasks:
     - name: Launch EC2 database instance
       amazon.aws.ec2_instance:
-        key_name: rachit-j-key
+        key_name: rachykey
         instance_type: t2.micro
-        image_id: ami-08012c0a9ee8e21c4
+        image_id: ami-0aff18ec83b712f05
         wait: yes
-        region: us-west-1
+        region: us-west-2
         count: 1
         volumes:
           - device_name: /dev/xvda
@@ -20,11 +20,11 @@
 
     - name: Launch EC2 web instance
       amazon.aws.ec2_instance:
-        key_name: rachit-j-key
+        key_name: rachykey
         instance_type: t2.micro
-        image_id: ami-08012c0a9ee8e21c4
+        image_id: ami-0aff18ec83b712f05
         wait: yes
-        region: us-west-1
+        region: us-west-2
         count: 1
         volumes:
           - device_name: /dev/xvda
@@ -36,11 +36,11 @@
 
     - name: Launch EC2 agent instance
       amazon.aws.ec2_instance:
-        key_name: rachit-j-key
+        key_name: rachykey
         instance_type: t2.micro
-        image_id: ami-08012c0a9ee8e21c4
+        image_id: ami-0aff18ec83b712f05
         wait: yes
-        region: us-west-1
+        region: us-west-2
         count: 1
         volumes:
           - device_name: /dev/xvda
@@ -52,11 +52,11 @@
 
     - name: Launch EC2 Guacamole instance
       amazon.aws.ec2_instance:
-        key_name: rachit-j-key
+        key_name: rachykey
         instance_type: t2.micro
-        image_id: ami-08012c0a9ee8e21c4
+        image_id: ami-0aff18ec83b712f05
         wait: yes
-        region: us-west-1
+        region: us-west-2
         count: 1
         volumes:
           - device_name: /dev/xvda
@@ -82,62 +82,26 @@
                         ansible_host: {{ ec2_db.instances[0].public_dns_name }}
                         ansible_port: 22
                         ansible_ssh_user: ubuntu
-                        ansible_ssh_private_key_file: rachit-j-key.pem
+                        ansible_ssh_private_key_file: rachykey.pem
                   zone1_web:
                     hosts:
                       zone1_web_1:
                         ansible_host: {{ ec2_web.instances[0].public_dns_name }}
                         ansible_port: 22
                         ansible_ssh_user: ubuntu
-                        ansible_ssh_private_key_file: rachit-j-key.pem
+                        ansible_ssh_private_key_file: rachykey.pem
                   zone1_agent:
                     hosts:
                       zone1_agent_1:
                         ansible_host: {{ ec2_agent.instances[0].public_dns_name }}
                         ansible_port: 22
                         ansible_ssh_user: ubuntu
-                        ansible_ssh_private_key_file: rachit-j-key.pem
+                        ansible_ssh_private_key_file: rachykey.pem
                   zone1_guac:
                     hosts:
                       zone1_guac_1:
                         ansible_host: {{ ec2_guac.instances[0].public_dns_name }}
                         ansible_port: 22
                         ansible_ssh_user: ubuntu
-                        ansible_ssh_private_key_file: rachit-j-key.pem
+                        ansible_ssh_private_key_file: rachykey.pem
 
-- name: Configure instances
-  hosts: all
-  become: true
-  tasks:
-    - name: Install required packages for Docker
-      apt:
-        name: 
-          - apt-transport-https
-          - ca-certificates
-          - curl
-          - software-properties-common
-        state: present
-
-    - name: Add Docker’s official GPG key
-      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-
-    - name: Set up the stable repository
-      shell: add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-    - name: Update apt package index
-      apt:
-        update_cache: yes
-
-    - name: Install Docker CE
-      apt:
-        name: 
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-        state: present
-
-    - name: Install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m`
-        dest: /usr/local/bin/docker-compose
-        mode: '0755'
