@@ -30,41 +30,8 @@ chmod 400 rachit-j-key.pem
 
 ## Provisioning Instances
 
-In `provision.yml`, you can configure each instance you need and automatically start them. Below is a sample configuration:
-
-```yml
-- name: Launch EC2 database instance
-  amazon.aws.ec2_instance:
-    key_name: rachit-j-key
-    instance_type: t2.micro
-    image_id: ami-08012c0a9ee8e21c4
-    wait: yes
-    region: us-west-1
-    count: 1
-    volumes:
-      - device_name: /dev/xvda
-        ebs:
-          volume_size: 20  # Specify the desired volume size in GB
-    tags:
-      Name: KasmDBServer
-  register: ec2_db
-```
-
-### Explanation of Parameters:
-- `key_name`: The name of the SSH key pair.
-- `instance_type`: The type of EC2 instance.
-- `image_id`: The AMI ID to use for the instance.
-- `wait`: Whether to wait for the instance to be in a running state.
-- `region`: The AWS region to launch the instance.
-- `count`: The number of instances to launch.
-- `volumes`: Configuration for the instance's volumes.
-- `tags`: Tags to assign to the instance.
-
-Run the playbook to provision the instances:
-
-```sh
-ansible-playbook -i inventory provision.yml
-```
+Start up >4 AWS Instances, size greater than 50gb, and modify their security group to have the following permissions:
+![image](https://github.com/nighthawkcoders/kasmv2-ansiblecode/assets/56803677/cb89ade3-478f-4c7f-9888-63307fcc17b6)
 
 ## Configuring the Configuration File (`inventory`)
 
@@ -86,6 +53,11 @@ all:
               ansible_ssh_user: ubuntu
               ansible_ssh_private_key_file: rachit-j-key.pem
         # Add similar configurations for web, agent, and guac
+```
+
+Moreover, in the file `roles/install_common/tasks/remote_db_init.yml`, you must change the `{{ redis ip }}` field (line 10) to the IP of the database server. Ex:
+```yml
+    host: "35.90.165.132" # IP CHANGED HERE
 ```
 
 ## SSH Connect and Run Commands
