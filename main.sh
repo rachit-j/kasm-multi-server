@@ -9,6 +9,8 @@ else
   exit 1
 fi
 
+clear
+
 # Function to display file contents slowly
 slow_cat() {
   local filename="$1"
