@@ -60,6 +60,7 @@ while true; do
   read choice
   case $choice in
     1)
+      echo "Installing Kasm..."
       ./launch.sh
       ;;
     2)
@@ -69,29 +70,29 @@ while true; do
       ansible-playbook -i inventory install_kasm.yml
       ;;
     3)
-      echo "Start Kasm command will be here"
+      echo "Start Kasm"
       ansible-playbook -i inventory start_kasm.yml
       ;;
     4)
-      echo "Stop Kasm command will be here"
+      echo "Stop Kasm"
       ansible-playbook -i inventory stop_kasm.yml
       ;;
     5)
-      echo "Restart Kasm command will be here"
+      echo "Restart Kasm"
       ansible-playbook -i inventory restart_kasm.yml
       ;;
     6)
-      echo "Update Kasm command will be here"
+      echo "Update Kasm"
       echo "Please update the inventory file as needed and press Enter to continue..."
       read -r
       ansible-playbook -i inventory install_kasm.yml
       ;;
     7)
-      echo "Uninstall Kasm command will be here"
+      echo "Uninstall Kasm"
       ansible-playbook -i inventory uninstall_kasm.yml
       ;;
     8)
-      echo "Uninstall Kasm and delete instances command will be here"
+      echo "Uninstall Kasm and delete instances"
       ansible-playbook -i inventory uninstall_kasm.yml
       terraform destroy -auto-approve
       ;;
