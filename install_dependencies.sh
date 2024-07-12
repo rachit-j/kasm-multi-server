@@ -16,15 +16,57 @@ else
   echo "Skipping Homebrew installation (not macOS)."
 fi
 
-# Check for and install Ansible
-if ! command -v ansible &>/dev/null; then
-  echo "Ansible not found. Installing Ansible..."
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install ansible
-  else
+# Function to install Ansible
+install_ansible() {
+  if command -v apt-get &>/dev/null; then
     sudo apt-get update -y
     sudo apt-get install -y ansible
+  elif command -v yum &>/dev/null; then
+    sudo yum install -y epel-release
+    sudo yum install -y ansible
+  elif command -v snap &>/dev/null; then
+    sudo snap install ansible --classic
+  else
+    echo "Unsupported package manager. Please install Ansible manually."
+    exit 1
   fi
+}
+
+# Function to install jq
+install_jq() {
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get update -y
+    sudo apt-get install -y jq
+  elif command -v yum &>/dev/null; then
+    sudo yum install -y epel-release
+    sudo yum install -y jq
+  elif command -v snap &>/dev/null; then
+    sudo snap install jq
+  else
+    echo "Unsupported package manager. Please install jq manually."
+    exit 1
+  fi
+}
+
+# Function to install AWS CLI
+install_awscli() {
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get update -y
+    sudo apt-get install -y awscli
+  elif command -v yum &>/dev/null; then
+    sudo yum install -y awscli
+  elif command -v snap &>/dev/null; then
+    sudo snap install aws-cli --classic
+  else
+    echo "Unsupported package manager. Please install AWS CLI manually."
+    exit 1
+  fi
+}
+
+# Install Ansible
+if ! command -v ansible &>/dev/null; then
+  echo "Ansible not found. Installing Ansible..."
+  install_ansible
   if [ $? -ne 0 ]; then
     echo "Error: Ansible installation failed."
     exit 1
@@ -33,21 +75,28 @@ else
   echo "Ansible is already installed."
 fi
 
-# Check for and install jq
+# Install jq
 if ! command -v jq &>/dev/null; then
   echo "jq not found. Installing jq..."
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install jq
-  else
-    sudo apt-get update -y
-    sudo apt-get install -y jq
-  fi
+  install_jq
   if [ $? -ne 0 ]; then
     echo "Error: jq installation failed."
     exit 1
   fi
 else
   echo "jq is already installed."
+fi
+
+# Install AWS CLI
+if ! command -v aws &>/dev/null; then
+  echo "AWS CLI not found. Installing AWS CLI..."
+  install_awscli
+  if [ $? -ne 0 ]; then
+    echo "Error: AWS CLI installation failed."
+    exit 1
+  fi
+else
+  echo "AWS CLI is already installed."
 fi
 
 # Additional dependencies can be added here as needed
