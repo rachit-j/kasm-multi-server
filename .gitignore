@@ -7,3 +7,4 @@ backup/
 *.tfstate
 *.tfstate.backup
 *.terraform.lock.hcl
+*.txt
