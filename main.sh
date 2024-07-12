@@ -2,6 +2,7 @@
 
 # Run the install_dependencies.sh script
 if [ -f ./install_dependencies.sh ]; then
+  chmod +x install_dependencies.sh
   ./install_dependencies.sh
 else
   echo "install_dependencies.sh script not found!"
