@@ -22,6 +22,12 @@ database_password=${database_password:-password}
 read -p "Enter redis password [default: password]: " redis_password
 redis_password=${redis_password:-password}
 
+read -p "Enter manager token [default: password]: " manager_token
+manager_token=${manager_token:-password}
+
+read -p "Enter registration token [default: password]: " registration_token
+registration_token=${registration_token:-password}
+
 # Create a new inventory file
 cat <<EOF > inventory
 ##################
@@ -76,6 +82,8 @@ cat <<EOF >> inventory
     admin_password: $admin_password
     database_password: $database_password
     redis_password: $redis_password
+    manager_token: $manager_token
+    registration_token: $registration_token
     zones:
       - zone1
     proxy_port: 443
