@@ -1,195 +1,258 @@
-# Multi-Server Installation
+# Multi-Server Configuration: Kasmv2
 
-- Used Ansible instead of Terraform
-- Everything is automated except for some SSH steps
+This section below is the installation and menu guide. For detailed docs on how the system was developed, please visit [this page].
 
-# Installation
+## Initialization Guide
 
-## Cloning
+### Setup
 
-Git clone the repository and download the latest Kasm image to `roles/install_common/files`
-
-## Installing Ansible and AWS CLI
-
-To install Ansible and AWS CLI, run the following commands:
+Clone the repository to your computer with the following command:
 
 ```sh
-sudo apt-get update
-sudo apt-get install ansible -y
-sudo apt-get install awscli -y
+git clone https://github.com/nighthawkcoders/kasm-multi-server.git
 ```
 
-## Generating AWS SSH Keys
+### Prerequisites
 
-Generate your SSH key pair using the AWS Management Console or the AWS CLI:
+For a Windows system, Windows Subsystem for Linux must be installed, preferrably with Ubuntu, however, MacOS Homebrew, apt, yum, and snap are all supported package managers.
+
+The following packages must be installed on the system:
+
+- ansible
+- jq
+- awscli (must be configured)
+
+The script `install_dependencies.sh` goes through the installation process, however, you must make sure awscli is configured accordig to your user. You may also run the script manually to install dependences:
 
 ```sh
-aws ec2 create-key-pair --key-name rachit-j-key --query 'KeyMaterial' --output text > rachit-j-key.pem
-chmod 400 rachit-j-key.pem
+chmod +x install_dependencies && ./install_dependencies.sh
 ```
 
-## Provisioning Instances
+Secondly, the Kasm installer needs to be downloaded and placed in the right location. Navigate to [https://www.kasmweb.com/downloads.html](https://www.kasmweb.com/downloads.html) and download the latest version as a `tar.gz` (when you click download, that should be the format it is already in). Make sure the name has no additions to it by the operating system. Finally, place the `tar.gz` file in the directory `roles/install_common/files/kasm_release_{version}.tar.gz`.
 
-Start up >4 AWS Instances, size greater than 50gb, and modify their security group to have the following permissions:
-![image](https://github.com/nighthawkcoders/kasmv2-ansiblecode/assets/56803677/cb89ade3-478f-4c7f-9888-63307fcc17b6)
+### Dashboard
 
-## Configuring the Configuration File (`inventory`)
+The script is now ready to run. You may run the command `chmod +x *.sh` in the root directory of the project and then run `main.sh`, or you may run the following command (preferred):
 
-Each parameter in the `inventory` file must be configured with the public IP addresses of the instances:
+```sh
+chmod +x main.sh && ./main.sh
+```
+
+The script will first check for the prerequisite dependencies, and will then initialize the dashboard, which will give the menu options:
+
+```
+Menu
+1. Install Kasm (run launch.sh)
+2. Install Kasm Images on Prewritten Inventory
+3. Start Kasm
+4. Stop Kasm
+5. Restart Kasm
+6. Update Kasm
+7. Uninstall Kasm
+8. Uninstall Kasm and Delete the Instances
+9. Exit
+```
+
+These menu options will be discussed as the guide continues. For now, note that only the number should be put in the input field (no extra spaces behind or ahead), and #9 is to exit.
+
+## (1) Installation of Multi-Server
+
+Installing Kasm from scratch means that there are no pre-existing servers. Therefore, the script can do its job without having to worry about the inventory. If you have pre-existing servers, read the inventory_directory to configure the inventory to work with your servers, and make sure you allow your configured ports access to your servers. During the installation, `.txt` files will appear. It is recommended that they stay on the system, as some parts of the system may use them even after installation.
+
+To install from scratch, we initialize the main script:
+
+```sh
+chmod +x main.sh && ./main.sh
+```
+
+We then select `1` on the menu, which double checks for the dependencies before installation, and will then proceed to ask for some variables, which are outlined in order in the table below.
+
+Here is the completed table:
+
+| Variable               | Question                                            | Expected Responses                                                                                                                                                                                         |
+|------------------------|-----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Region                 | Enter AWS region                                    | This question expects the response of an AWS region, such as "us-west-1" so it can determine the AMI to use for Ubuntu 22.04. The accepted regions are "us-west-1", "us-west-2", "us-east-1", "us-east-2". |
+| # Agent Servers        | Enter the number of agent servers (default 1)       | This question asks for the number of Kasm agent servers you would like to add. This expects a numerical argument, such as "3". The default (press ENTER) is "1".                                           |
+| Agent Server Processor | Enter the size of agent servers (default t3.medium) | Asks for processing size of agent server, which is the type of processor selected in AWS. This has a default (press ENTER) of t3.medium, and accepts arguments similar to it.                              |
+| Other Server Processor | Enter the size of other servers (DB, Guac, Web)     | Asks for the processing size of other servers, such as the DB, Guac, and Web servers. This has a default (press ENTER) of t3.medium, and accepts arguments similar to it.                                  |
+| Agent Server Disk Size | Enter the disk size of agent servers in GB (default 50) | Asks for the disk size in GB of the agent servers. This has a default (press ENTER) of 50 GB, and accepts numerical arguments similar to it.                                                                |
+| Other Server Disk Size | Enter the disk size of other servers (DB, Guac, Web) in GB (default 50) | Asks for the disk size in GB of the other servers, such as DB, Guac, and Web servers. This has a default (press ENTER) of 50 GB, and accepts numerical arguments similar to it.                              |
+| Custom AMI ID          | Enter custom AMI ID if region-specific AMI is not available (leave blank if not needed) | Asks for a custom AMI ID if the region-specific AMI is not available. This field can be left blank if not needed.                                                                                           |
+
+
+The system will then create the requested amount of images, with the web image having an elastic IP associated with it. After, the system will SSH to each instance and install `docker`. Then, it will proceed to installing the Kasm docker images onto the system. However, it will first ask for the passwords it should initialize the system with. The table of passwords is shown below:
+
+| Variable             | Question                                               | Expected Responses                                                                                                                                                                              |
+|----------------------|--------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Kasm User Password   | Enter user password [default: password]                | Asks the user for the local kasm user's (user@kasm.local) password, and has a default (press ENTER) password of "password".                                                                     |
+| Admin Password       | Enter admin password [default: adminpassword]          | Asks the user for the admin user's password, and has a default (press ENTER) password of "adminpassword".                                                                                       |
+| DB Password          | Enter database password [default: dbpassword]          | Asks the user for the database user's password, and has a default (press ENTER) password of "dbpassword".                                                                                       |
+| Redis Password       | Enter Redis password [default: redispassword]          | Asks the user for the Redis user's password, and has a default (press ENTER) password of "redispassword".                                                                                       |
+| Manager Token        | Enter manager token [default: managertoken]            | Asks the user for the manager token, and has a default (press ENTER) token of "managertoken".                                                                                                   |
+| Registration Token   | Enter registration token [default: registrationtoken]  | Asks the user for the registration token, and has a default (press ENTER) token of "registrationtoken".                                                                                         |
+
+These passwords should be stored somewhere safe, as you will need them to log onto and maintain the system. These passwords can be recovered from the inventory file in case.
+
+After setting the passwords, the system will begin the multi-server installation of the Kasm system.
+
+Once the system is finished, it will be complete with the installation. You can now access your Kasm multi-server instance at `https://{your-web-ip}`, which can be found by the command:
+
+```sh
+cat web_server_ip.txt
+```
+
+*If blocked, click on Advanced and then Proceed to the Connection to access the system*
+
+## (2) Installation of Kasm on Prewritten Inventory
+
+To just install the Kasm Docker images, you can manually edit the `inventory` file using the inventory instructions located in `inventory_directory`, where each comment or variable name explains how to configure the system.
+
+### Manual Multi-Server
+
+To manually add multiple parts, all you must do is change the integers and add new blocks to the configuration, similar to this:
 
 ```yml
-##################
-# Host inventory #
-##################
-all:
-  children:
-    zone1:
-      children:
-        zone1_db:
+        zone1_web:
           hosts:
-            zone1_db_1:
-              ansible_host: <public_ip>
+            zone1_web_1:
+              ansible_host: zone1_web_hostname
               ansible_port: 22
               ansible_ssh_user: ubuntu
-              ansible_ssh_private_key_file: rachit-j-key.pem
-        # Add similar configurations for web, agent, and guac
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
+            zone1_web_2:
+              ansible_host: zone1_web2_hostname
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
+        zone1_agent:
+          hosts:
+            zone1_agent_1:
+              ansible_host: zone1_agent_hostname
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
+            zone1_agent_2:
+              ansible_host: zone1_agent2_hostname
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
+        zone1_guac:
+          hosts:
+            zone1_guac_1:
+              ansible_host: zone1_guac_hostname
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
+          hosts:
+            zone1_guac_2:
+              ansible_host: zone1_guac2_hostname
+              ansible_port: 22
+              ansible_ssh_user: ubuntu
+              ansible_ssh_private_key_file: ~/.ssh/id_rsa
 ```
 
-Moreover, in the file `roles/install_common/tasks/remote_db_init.yml`, you must change the `{{ redis ip }}` field (line 10) to the IP of the database server. Ex:
-```yml
-    host: "35.90.165.132" # IP CHANGED HERE
+This can be done for `web`, `agent`, and `guac`, but `db` is not supported as of this time.
+
+### Deploying with a remote database
+
+In order to deploy with a dedicated remote database that is not managed by ansible you will need to provide endpoint and authentication credentials. To properly init the database superuser credentials along with the credentials the application will use to access it will need to be defined. 
+
+1. First remove the `zone1_db` entry from inventory:
+
+```
+        #zone1_db:
+          #hosts:
+            #zone1_db_1:
+              #ansible_host: zone1_db_hostname
+              #ansible_port: 22
+              #ansible_ssh_user: ubuntu
+              #ansible_ssh_private_key_file: ~/.ssh/id_rsa
 ```
 
-## SSH Connect and Run Commands
+2. Set the relevant credentials and enpoints:
 
-Connect to each instance using SSH and run the following commands to install Docker:
-
-```sh
-ssh -i rachit-j-key.pem ubuntu@<public_ip>
+```
+    ## PostgreSQL settings ##
+    ##############################################
+    # PostgreSQL remote DB connection parameters #
+    ##############################################
+    # The following parameters need to be set only once on database initialization
+    init_remote_db: true
+    database_master_user: postgres
+    database_master_password: PASSWORD
+    database_hostname: DATABASE_HOSTNAME
+    # The remaining variables can be modified to suite your needs or left as is in a normal deployment
+    database_user: kasmapp
+    database_name: kasm
+    database_port: 5432
+    database_ssl: true
+    ## redis settings ##
+    # redis connection parameters if hostname is set the web role will use a remote redis server
+    redis_hostname: REDIS_HOSTNAME
+    redis_password: REDIS_PASSWORD
 ```
 
-```sh
-# Add Docker's official GPG key:
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+3. Run the deployment:
+ 
+Option 2 on the Menu or `ansible-playbook -i inventory install_kasm.yml`
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+
+**Post deployment if the `install_kasm.yml` needs to be run again to make scaling changes it is important to set `init_remote_db: false` this should happen automatically but best to check**
+
+### Deploying a Dedicated Kasm Proxy
+
+1. Before deployment or while scaling open `inventory` and uncomment/add the relevant lines for :
+
+```
+        # Optional Web Proxy server
+        #zone1_proxy:
+          #hosts:
+            #zone1_proxy_1:
+              #ansible_host: zone1_proxy_hostname
+              #ansible_port: 22
+              #ansible_ssh_user: ubuntu
+              #ansible_ssh_private_key_file: ~/.ssh/id_rsa
 ```
 
-```sh
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-sudo apt-get install docker-compose -y
-```
+2. Post deployment follow the instructions [here](https://www.kasmweb.com/docs/latest/install/multi_server_install/multi_installation_proxy.html#post-install-configuration) to configure the proxy for use.
 
-## Running Everything
+**It is important to use a DNS endpoint for the `web` and `proxy` role as during deployment the CORS settings will be linked to that domain**
 
-Finally, run the Ansible playbooks and make sure to check the output and save passwords if not already defined:
+## (3) Start Kasm
 
-```sh
-ansible-playbook -i inventory install_kasm.yml
-```
+If the Kasm network was stopped before, or is inactive, you may start it with option 3.
 
-Ensure all services are running and properly configured.
+For more specific start commands:
 
-# OLD README
+Start Kasm Workspaces (start_kasm.yml)- This will start all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 start_kasm.yml`
 
-## Ansible
+## (4) Stop Kasm
 
-### Installing Ansible
+To stop the Kasm network, and take it offline, you may do so with option 4.
 
-This project requires ansible 2.9.24 or greater on the host running the ansible playbook. The target systems do no not need Ansible installed.
+For more specific stop commands:
 
-#### Pip Method
+Stop Kasm Workspaces (stop_kasm.yml)- This will stop all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 stop_kasm.yml`
 
-The steps below for installing Ansible have been tested on CentOS 7.9.2009, CentOS 8.4.2105, Debian 9.13, Debian 10.10, Ubuntu 18.04.5, Ubuntu 20.04.3, and Ubuntu 22.04.2. This should function on any Linux distribution with Python3.
+## (5) Restart Kasm 
 
-1. Ensure pip3 is installed 
-    
-    Ubuntu/Debian: `sudo apt install python3-pip`
-    
-    CentOS: `sudo yum install python3-pip`
+To stop the Kasm network, and take it offline, you may do so with option 4.
 
-2. Add local bin directory to path in bashrc
-    
-```
-echo 'PATH=$PATH:$HOME/.local/bin' >> ~/.bashrc
-source ~/.bashrc
-```
+For more specific restart commands:
 
-3. Use pip to install ansible
+Restart Kasm Workspaces (restart_kasm.yml)- This will restart all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 restart_kasm.yml`
 
-`python3 -m pip install --user -U pip && python3 -m pip install --user -U ansible`
+## (6) Update Kasm
 
-4. Ensure that ansible version is greater than 2.9.24
-
-`ansible --version`
-
-#### Distribution Native
-
-Ubuntu 22.04.2, Debian Bullseye, Alpine 3.17, RHEL 9 and derivatives (including Fedora 37), and Arch all have a late enough version of Ansible in their repositories.
-
-Ubuntu/Debian: `sudo apt-get install -y ansible`
-RHEL/Fedora: `sudo dnf -y install ansible-core`
-Alpine: `sudo apk add ansible`
-Arch: `sudo pacman -Sy --noconfirm ansible-core`
-
-## Kasm Multi Server install
-This playbook will deploy Kasm Workspaces in a multi-server deployment using Ansible. 
-
-* It installs the kasm components on the systems specified in the ansible `inventory` required for the respective roles (db, web, agent, guac, proxy).
-* It creates a new swapfile to ensure that the total swap space matches the size `desired_swap_size` specified in the inventory file for all agents.
-* It enables the docker daemon to run at boot to ensure that kasm services are started after a reboot.
-
-It has been tested on CentOS 7.9.2009, CentOS 8.4.2105, Debian 9.13, Debian 10.10, Ubuntu 18.04.5, Ubuntu 20.04.3, and Ubuntu 22.04.2 hosts.
-
-![Diagram][Image_Diagram]
-
-[Image_Diagram]: https://f.hubspotusercontent30.net/hubfs/5856039/Ansible/Ansible%20Multi%20Server.png "Diagram"
-
-
-### Ansible Configuration and installation
-
-1. Open `inventory` file and fill in the hostnames / ips for the servers that will be fulfilling the agent, web, db, and guac roles. Please take the time to get acquainted with the inventory file and it's layout. It serves as the master file controlling how this multi server installation will be deployed. Every variable in this file has been designed to scale except for the database. Regardless of deployment size there will only be one centralized database `zone1_db_1` or a remote type db that all "web" roles need direct access to.
-
-2. Ensure the variables for each host in the deployment are set properly specifically:  
-    * ansible_host: (hostname or IP address)
-    * ansible_port: (ssh port)
-    * ansible_ssh_user: (ssh user to login as, reccomended root or a user with passwordless sudo)
-    * ansible_ssh_private_key_file: (full path to ssh private key file to user which can be include bash completion IE ~/.ssh/mykey)
-
-3. Download the Kasm Workspaces installer from https://www.kasmweb.com/downloads.html and copy it to `roles/install_common/files`. 
-    
-    Optionally, if doing an offline installation: Download and copy the workspace_images and service_images files to `roles/install_common/files`.
-   
-4. Run the deployment.
-
-    `ansible-playbook -i inventory install_kasm.yml`
-
-5. Make notes of the credentials generated during the installation to be able to login.
-
-6. Login to the deployment as admin@kasm.local using the IP of one of the web servers (eg https://192.168.1.2) 
-
-7. Navigate to the Agents tab, and enable each Agent after it checks in. (May take a few minutes)
-
-**Post installation your local inventory file will be modified with the appropriate credentials please make a copy or keep this somewhere safe**
-
-**If any deployment errors occur please run the uninstall_kasm.yml playbook against the same inventory file before trying again as there might be half set credentials leading to a broken deployment, see the helper playbooks section for more information**
+This will update the Kasm framework on the hosts using the install feature. 
 
 ### Scaling the deployment
 
 The installation can be "scaled up" after being installed by adding any additional hosts including entire new zones. Once modified run: 
 
-`ansible-playbook -i inventory install_kasm.yml`
+Option 2 on the Menu or `ansible-playbook -i inventory install_kasm.yml`
 
-Before running the installation against a modified inventory file please ensure the credentials lines in your inventory were set and uncommented properly by the initial deployment IE:
+Before running the installation against a modified inventory file please ensure the credentials lines in your inventory were set and uncommented properly by the initial deployment IE. If installed through the menu, they should already be replaced.
 
 ```
     ## Credentials ##
@@ -320,74 +383,15 @@ sudo grep "redis_password" /opt/kasm/current/conf/app/api.app.config.yaml
 sudo grep "token" /opt/kasm/current/conf/app/agent.app.config.yaml
 ```
 
-### Deploying with a remote database
+## (7) Uninstall Kasm
 
-In order to deploy with a dedicated remote database that is not managed by ansible you will need to provide endpoint and authentication credentials. To properly init the database superuser credentials along with the credentials the application will use to access it will need to be defined. 
+Uninstalls the Kasm workspace off of the images, but leaves the images intact.
 
-1. First remove the `zone1_db` entry from inventory:
+## (8) Uninstall Kasm and Delete the Instances
 
-```
-        #zone1_db:
-          #hosts:
-            #zone1_db_1:
-              #ansible_host: zone1_db_hostname
-              #ansible_port: 22
-              #ansible_ssh_user: ubuntu
-              #ansible_ssh_private_key_file: ~/.ssh/id_rsa
-```
+Uninstalles the Kasm workspaces and deletes the instances. 
 
-2. Set the relevant credentials and enpoints:
-
-```
-    ## PostgreSQL settings ##
-    ##############################################
-    # PostgreSQL remote DB connection parameters #
-    ##############################################
-    # The following parameters need to be set only once on database initialization
-    init_remote_db: true
-    database_master_user: postgres
-    database_master_password: PASSWORD
-    database_hostname: DATABASE_HOSTNAME
-    # The remaining variables can be modified to suite your needs or left as is in a normal deployment
-    database_user: kasmapp
-    database_name: kasm
-    database_port: 5432
-    database_ssl: true
-    ## redis settings ##
-    # redis connection parameters if hostname is set the web role will use a remote redis server
-    redis_hostname: REDIS_HOSTNAME
-    redis_password: REDIS_PASSWORD
-```
-
-3. Run the deployment:
- 
-`ansible-playbook -i inventory install_kasm.yml`
-
-
-**Post deployment if the `install_kasm.yml` needs to be run again to make scaling changes it is important to set `init_remote_db: false` this should happen automatically but best to check**
-
-### Deploying a Dedicated Kasm Proxy
-
-1. Before deployment or while scaling open `inventory` and uncomment/add the relevant lines for :
-
-```
-        # Optional Web Proxy server
-        #zone1_proxy:
-          #hosts:
-            #zone1_proxy_1:
-              #ansible_host: zone1_proxy_hostname
-              #ansible_port: 22
-              #ansible_ssh_user: ubuntu
-              #ansible_ssh_private_key_file: ~/.ssh/id_rsa
-```
-
-2. Post deployment follow the instructions [here](https://www.kasmweb.com/docs/latest/install/multi_server_install/multi_installation_proxy.html#post-install-configuration) to configure the proxy for use.
-
-**It is important to use a DNS endpoint for the `web` and `proxy` role as during deployment the CORS settings will be linked to that domain**
-
-## Helper playbooks
-
-Using these playbooks assumes you have allready gone through the installation process and setup your inventory file properly. These playbooks run against that inventory to help administrators: 
+## EXTRA Commands/All Helper Playbooks
 
 * Uninstall Kasm Workspaces (uninstall_kasm.yml)- This will completely purge your Kasm Workspaces installation on all hosts, if using a remote database that data will stay intact no remote queries will be executed. Example Usage: `ansible-playbook -i inventory uninstall_kasm.yml`
 * Stop Kasm Workspaces (stop_kasm.yml)- This will stop all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 stop_kasm.yml`
@@ -398,3 +402,4 @@ Using these playbooks assumes you have allready gone through the installation pr
     * Modify `retention_days` in inventory to change the number of days that logs backups are retained on db host
     * Set `local_backup_dir` to define a path on the local ansible host where backups will be stored, if unset backups will only exist on the remote server
 * OS Patching (patch_os.yml)- This will update system packages and reboot on all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 patch_os.yml`
+

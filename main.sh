@@ -8,7 +8,7 @@ else
   echo "install_dependencies.sh script not found!"
   exit 1
 fi
-
+sleep 2
 clear
 
 # Function to display file contents slowly
@@ -31,7 +31,7 @@ slow_cat() {
 
 # Function to display the menu
 show_menu() {
-  echo "Menu Options"
+  echo "Menu"
   echo "1. Install Kasm (run launch.sh)"
   echo "2. Install Kasm Images on Prewritten Inventory"
   echo "3. Start Kasm"
@@ -42,7 +42,7 @@ show_menu() {
   echo "8. Uninstall Kasm and Delete the Instances"
   echo "9. Exit"
   echo ""
-  echo -n "Enter your choice: "
+  echo -n "Select: "
 }
 
 # Main script execution
@@ -69,7 +69,8 @@ while true; do
     2)
       echo "Install Kasm Images on Prewritten Inventory"
       echo "Make sure that docker is installed on all images, otherwise ctrl-c to escape"
-      sleep 10
+      echo "Make sure the inventory file has init_remote_db: false for scaling"
+      sleep 20
       ansible-playbook -i inventory install_kasm.yml
       ;;
     3)

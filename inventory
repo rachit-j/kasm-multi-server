@@ -8,36 +8,38 @@ all:
         zone1_db:
           hosts:
             zone1_db_1:
-              ansible_host: 35.163.77.96  # Updated IP for KasmDBServer
+              ansible_host: 54.214.143.160  # Updated IP for KasmDBServer
               ansible_port: 22
               ansible_ssh_user: ubuntu
-              ansible_ssh_private_key_file: deployer-key-cc1302cc.pem
+              ansible_ssh_private_key_file: deployer-key-b83119a2.pem
         zone1_web:
           hosts:
             zone1_web_1:
-              ansible_host: 34.213.187.98  # Updated IP for KasmWebServer
+              ansible_host: 54.70.156.35  # Updated IP for KasmWebServer
               ansible_port: 22
               ansible_ssh_user: ubuntu
-              ansible_ssh_private_key_file: deployer-key-cc1302cc.pem
+              ansible_ssh_private_key_file: deployer-key-b83119a2.pem
         zone1_agent:
             zone1_agent_1:
-              ansible_host: 52.10.38.128  # Updated IP for KasmAgentServer
+              ansible_host: 34.222.18.142  # Updated IP for KasmAgentServer
               ansible_port: 22
               ansible_ssh_user: ubuntu
-              ansible_ssh_private_key_file: deployer-key-cc1302cc.pem
+              ansible_ssh_private_key_file: deployer-key-b83119a2.pem
         zone1_guac:
           hosts:
             zone1_guac_1:
-              ansible_host: 34.218.44.137  # Updated IP for KasmGuacServer
+              ansible_host: 35.92.219.102  # Updated IP for KasmGuacServer
               ansible_port: 22
               ansible_ssh_user: ubuntu
-              ansible_ssh_private_key_file: deployer-key-cc1302cc.pem
+              ansible_ssh_private_key_file: deployer-key-b83119a2.pem
   vars:
     default_web: 1
     user_password: password
     admin_password: password
     database_password: password
     redis_password: password
+    manager_token: password
+    registration_token: password
     zones:
       - zone1
     proxy_port: 443
