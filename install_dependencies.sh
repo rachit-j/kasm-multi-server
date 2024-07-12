@@ -99,6 +99,16 @@ else
   echo "AWS CLI is already installed."
 fi
 
+# Check for the Kasm release tar.gz file
+if [ ! -f roles/install_common/files/*.tar.gz ]; then
+  echo "Warning: No Kasm release .tar.gz file found in roles/install_common/files/."
+else
+  echo "Kasm release .tar.gz file found in roles/install_common/files/."
+  echo "Please ensure this is the correct file for your installation."
+fi
+
+
+
 # Additional dependencies can be added here as needed
 
 echo "All dependencies have been installed successfully."
