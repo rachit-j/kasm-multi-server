@@ -1,4 +1,4 @@
-# Kasm Multi-Server Developers Gude
+# Kasm Multi-Server Developers Guide
 
 This document goes through the menu options and other options while explaining how the system is configured and works. Think of this as an extended guide explaining how everything works.
 
