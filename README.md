@@ -22,13 +22,13 @@ The following packages must be installed on the system:
 - jq
 - awscli (must be configured)
 
-The script `install_dependencies.sh` goes through the installation process, however, you must make sure awscli is configured accordig to your user. You may also run the script manually to install dependences:
+The script `install_dependencies.sh` goes through the installation process, however, you must make sure awscli is configured accordig to your user. You may also run the script manually to install dependences.
+
+Secondly, the Kasm installer needs to be downloaded and placed in the right location. Navigate to [https://www.kasmweb.com/downloads.html](https://www.kasmweb.com/downloads.html) and download the latest version as a `tar.gz` (when you click download, that should be the format it is already in). Make sure the name has no additions to it by the operating system. Finally, place the `tar.gz` file in the directory `roles/install_common/files/kasm_release_{version}.tar.gz`.
 
 ```sh
 chmod +x install_dependencies && ./install_dependencies.sh
 ```
-
-Secondly, the Kasm installer needs to be downloaded and placed in the right location. Navigate to [https://www.kasmweb.com/downloads.html](https://www.kasmweb.com/downloads.html) and download the latest version as a `tar.gz` (when you click download, that should be the format it is already in). Make sure the name has no additions to it by the operating system. Finally, place the `tar.gz` file in the directory `roles/install_common/files/kasm_release_{version}.tar.gz`.
 
 ### Dashboard
 
@@ -397,7 +397,7 @@ Uninstalles the Kasm workspaces and deletes the instances.
 * Stop Kasm Workspaces (stop_kasm.yml)- This will stop all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 stop_kasm.yml`
 * Start Kasm Workspaces (start_kasm.yml)- This will start all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 start_kasm.yml`
 * Restart Kasm Workspaces (restart_kasm.yml)- This will restart all hosts defined in inventory or optionally be limited to a zone, group or single server passing the `--limit` flag. Example Usage `ansible-playbook -i inventory --limit zone1_agent_1 restart_kasm.yml`
-* Backup Database (backup_db.yml)- This will make a backup of a managed Docker based db server, this playbook will not function with a remote db type installation. Example Usage ``ansible-playbook -i inventory backup_db.yml`
+* Backup Database (backup_db.yml)- This will make a backup of a managed Docker based db server, this playbook will not function with a remote db type installation. Example Usage `ansible-playbook -i inventory backup_db.yml`
     * Modify `remote_backup_dir` in inventory to change the path the remote server stores the backups
     * Modify `retention_days` in inventory to change the number of days that logs backups are retained on db host
     * Set `local_backup_dir` to define a path on the local ansible host where backups will be stored, if unset backups will only exist on the remote server
