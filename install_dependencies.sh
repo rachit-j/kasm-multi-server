@@ -69,6 +69,8 @@ install_awscli() {
   fi
 }
 
+sleep 0.2
+
 # Install Ansible
 if ! command -v ansible &>/dev/null; then
   echo "Ansible not found. Installing Ansible..."
@@ -93,6 +95,8 @@ else
   echo "jq is already installed."
 fi
 
+sleep 0.2
+
 # Install AWS CLI
 if ! command -v aws &>/dev/null; then
   echo "AWS CLI not found. Installing AWS CLI..."
@@ -105,6 +109,8 @@ else
   echo "AWS CLI is already installed."
 fi
 
+sleep 0.2
+
 # Check for the Kasm release tar.gz file
 if [ ! -f roles/install_common/files/*.tar.gz ]; then
   echo "Warning: No Kasm release .tar.gz file found in roles/install_common/files/."
@@ -112,6 +118,8 @@ else
   echo "Kasm release .tar.gz file found in roles/install_common/files/."
   echo "Please ensure this is the correct file for your installation."
 fi
+
+sleep 0.2
 
 # Additional dependencies can be added here as needed
 
