@@ -26,6 +26,8 @@ install_ansible() {
     sudo yum install -y ansible
   elif command -v snap &>/dev/null; then
     sudo snap install ansible --classic
+  elif command -v brew &>/dev/null; then
+    brew install ansible
   else
     echo "Unsupported package manager. Please install Ansible manually."
     exit 1
@@ -42,6 +44,8 @@ install_jq() {
     sudo yum install -y jq
   elif command -v snap &>/dev/null; then
     sudo snap install jq
+  elif command -v brew &>/dev/null; then
+    brew install jq
   else
     echo "Unsupported package manager. Please install jq manually."
     exit 1
@@ -57,6 +61,8 @@ install_awscli() {
     sudo yum install -y awscli
   elif command -v snap &>/dev/null; then
     sudo snap install aws-cli --classic
+  elif command -v brew &>/dev/null; then
+    brew install awscli
   else
     echo "Unsupported package manager. Please install AWS CLI manually."
     exit 1
@@ -106,8 +112,6 @@ else
   echo "Kasm release .tar.gz file found in roles/install_common/files/."
   echo "Please ensure this is the correct file for your installation."
 fi
-
-
 
 # Additional dependencies can be added here as needed
 
