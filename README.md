@@ -1,6 +1,10 @@
 # Multi-Server Configuration: Kasmv2
 
-This section below is the installation and menu guide. For detailed docs on how the system was developed, please visit [this page].
+Kasmv2 Homepage: [https://nighthawkcoders.github.io/kasmv2-frontend/](https://nighthawkcoders.github.io/kasmv2-frontend/)
+
+Multi-Server Docs: [https://nighthawkcoders.github.io/kasmv2-frontend/multi-server](https://nighthawkcoders.github.io/kasmv2-frontend/multi-server)
+
+This section below is the installation and menu guide. For detailed docs on how the system was developed, please visit [[this page](https://nighthawkcoders.github.io/kasmv2-frontend/multi-server/2024/07/12/multiserver-developers-guide.html)].
 
 ## Initialization Guide
 
