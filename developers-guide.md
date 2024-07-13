@@ -2,10 +2,6 @@
 
 This document goes through the menu options and other options while explaining how the system is configured and works. Think of this as an extended guide explaining how everything works.
 
-# Multi-Server Configuration: Kasmv2
-
-This section below is the installation and menu guide. For detailed docs on how the system was developed, please visit [this page].
-
 ## Initialization Guide
 
 ### Setup
