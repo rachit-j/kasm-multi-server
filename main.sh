@@ -65,6 +65,9 @@ while true; do
     1)
       echo "Installing Kasm..."
       ./launch.sh
+      echo ""
+      echo "Install complete, website link at https://$(cat web_server_ip.txt)"
+      echo ""
       ;;
     2)
       echo "Install Kasm Images on Prewritten Inventory"
