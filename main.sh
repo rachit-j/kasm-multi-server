@@ -32,7 +32,7 @@ slow_cat() {
 # Function to display the menu
 show_menu() {
   echo "Menu"
-  echo "1. Install Kasm (run launch.sh)"
+  echo "1. Install Kasm (run kasm_aws_instances.sh)"
   echo "2. Install Kasm Images on Prewritten Inventory"
   echo "3. Start Kasm"
   echo "4. Stop Kasm"
@@ -64,9 +64,13 @@ while true; do
   case $choice in
     1)
       echo "Installing Kasm..."
+      echo "Deleting .envinputs and .envservers if they exist..."
+      [ -f .envinputs ] && rm .envinputs
+      [ -f .envservers ] && rm .envservers
+      chmod +x launch.sh
       ./launch.sh
       echo ""
-      echo "Install complete, website link at https://$(cat web_server_ip.txt)"
+      echo "Install complete, website link at https://$(cat .envservers | grep web_server_ip | cut -d '=' -f2)"
       echo ""
       ;;
     2)

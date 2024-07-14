@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# Load IP addresses from files
-agent_server_ips=$(cat agent_server_ips.txt)
-db_server_ip=$(cat db_server_ip.txt)
-guac_server_ip=$(cat guac_server_ip.txt)
-web_server_ip=$(cat web_server_ip.txt)
-
-# Load the SSH key file name
-key_file=$(cat key_file.txt)
+# Load environment variables
+agent_server_ips=$(cat .envservers | grep agent_server_ips | cut -d '=' -f2-)
+db_server_ip=$(cat .envservers | grep db_server_ip | cut -d '=' -f2-)
+guac_server_ip=$(cat .envservers | grep guac_server_ip | cut -d '=' -f2-)
+web_server_ip=$(cat .envservers | grep web_server_ip | cut -d '=' -f2-)
+key_file=$(cat .envservers | grep key_file | cut -d '=' -f2-)
 
 # Commands to run on each server
 commands=$(cat <<'EOF'
@@ -36,6 +34,7 @@ EOF
 }
 
 # Run commands on agent servers
+IFS=$'\n' # To handle each line as a separate entry
 for ip in $agent_server_ips; do
   run_commands "$ip"
 done

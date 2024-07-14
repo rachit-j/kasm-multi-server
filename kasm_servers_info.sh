@@ -1,32 +1,18 @@
 #!/bin/bash
 
-# Load IP addresses from files
-agent_server_ips=$(cat agent_server_ips.txt)
-db_server_ip=$(cat db_server_ip.txt)
-guac_server_ip=$(cat guac_server_ip.txt)
-web_server_ip=$(cat web_server_ip.txt)
+# Load environment variables from .envinputs and .envservers
+user_password=$(cat .envinputs | grep user_password | cut -d '=' -f2)
+admin_password=$(cat .envinputs | grep admin_password | cut -d '=' -f2)
+database_password=$(cat .envinputs | grep database_password | cut -d '=' -f2)
+redis_password=$(cat .envinputs | grep redis_password | cut -d '=' -f2)
+manager_token=$(cat .envinputs | grep manager_token | cut -d '=' -f2)
+registration_token=$(cat .envinputs | grep registration_token | cut -d '=' -f2)
 
-# Load the SSH key file name
-key_file=$(cat key_file.txt)
-
-# Prompt user for passwords with default values
-read -p "Enter user password [default: password]: " user_password
-user_password=${user_password:-password}
-
-read -p "Enter admin password [default: password]: " admin_password
-admin_password=${admin_password:-password}
-
-read -p "Enter database password [default: password]: " database_password
-database_password=${database_password:-password}
-
-read -p "Enter redis password [default: password]: " redis_password
-redis_password=${redis_password:-password}
-
-read -p "Enter manager token [default: password]: " manager_token
-manager_token=${manager_token:-password}
-
-read -p "Enter registration token [default: password]: " registration_token
-registration_token=${registration_token:-password}
+agent_server_ips=$(cat .envservers | grep agent_server_ips | cut -d '=' -f2)
+db_server_ip=$(cat .envservers | grep db_server_ip | cut -d '=' -f2)
+guac_server_ip=$(cat .envservers | grep guac_server_ip | cut -d '=' -f2)
+web_server_ip=$(cat .envservers | grep web_server_ip | cut -d '=' -f2)
+key_file=$(cat .envservers | grep key_file | cut -d '=' -f2)
 
 # Create a new inventory file
 cat <<EOF > inventory
@@ -56,6 +42,7 @@ EOF
 
 # Add agent server IPs
 index=1
+IFS=$'\n' # To handle each line as a separate entry
 for ip in $agent_server_ips; do
   cat <<EOF >> inventory
             zone1_agent_$index:

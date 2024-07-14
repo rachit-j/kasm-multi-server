@@ -1,24 +1,23 @@
 #!/bin/bash
 
 # Run the dependencies script
-chmod +x install_dependencies.sh
-./install_dependencies.sh
+chmod +x kasm_dependencies.sh
+./kasm_dependencies.sh
 
 # Run the deployment script
-chmod +x deploy.sh
-./deploy.sh
+chmod +x kasm_aws_instances.sh
+./kasm_aws_instances.sh
 
 sleep 20
 
 # Run the command execution script
-chmod +x execute_commands.sh
-./execute_commands.sh
+chmod +x kasm_servers_tools.sh
+./kasm_servers_tools.sh
 
 # Run the update inventory script
-chmod +x update_inventory.sh
-./update_inventory.sh
+chmod +x kasm_servers_info.sh
+./kasm_servers_info.sh
 
 # Run the playbook script
-chmod +x run_playbook.sh
-./run_playbook.sh
-
+chmod +x kasm_servers_playbook.sh
+./kasm_servers_playbook.sh
