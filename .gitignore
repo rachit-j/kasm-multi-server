@@ -1,6 +1,6 @@
 backup/
-*.tar.gz
-*.tar
+# *.tar.gz
+# *.tar
 *.pem
 *.key
 .terraform
