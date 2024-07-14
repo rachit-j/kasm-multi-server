@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Run the install_dependencies.sh script
-if [ -f ./install_dependencies.sh ]; then
-  chmod +x install_dependencies.sh
-  ./install_dependencies.sh
+if [ -f ./kasm_dependencies.sh ]; then
+  chmod +x kasm_dependencies.sh
+  ./kasm_dependencies.sh
 else
-  echo "install_dependencies.sh script not found!"
+  echo "kasm_dependencies.sh script not found!"
   exit 1
 fi
 sleep 2
