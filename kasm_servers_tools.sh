@@ -7,6 +7,8 @@ guac_server_ip=$(cat .envservers | grep guac_server_ip | cut -d '=' -f2-)
 web_server_ip=$(cat .envservers | grep web_server_ip | cut -d '=' -f2-)
 key_file=$(cat .envservers | grep key_file | cut -d '=' -f2-)
 
+IFS=',' read -r -a agent_ips_array <<< "$agent_server_ips"
+
 # Commands to run on each server
 commands=$(cat <<'EOF'
 #!/bin/bash
@@ -34,8 +36,7 @@ EOF
 }
 
 # Run commands on agent servers
-IFS=$'\n' # To handle each line as a separate entry
-for ip in $agent_server_ips; do
+for ip in "${agent_ips_array[@]}"; do
   run_commands "$ip"
 done
 

@@ -62,14 +62,16 @@ else
 fi
 
 # Capture IP addresses from Terraform output
-agent_server_ips=$(terraform output -json agent_server_ips | jq -r '.[]')
+agent_server_ips=$(terraform output -json agent_server_ips | jq -r '.[]' | tr '\n' ',')
+agent_server_ips=${agent_server_ips%,} # Remove the trailing comma
+
 db_server_ip=$(terraform output -json db_server_ip | jq -r '.')
 guac_server_ip=$(terraform output -json guac_server_ip | jq -r '.')
 web_server_ip=$(terraform output -json web_server_ip | jq -r '.')
 
 # Store IP addresses in .envservers
 cat <<EOF > .envservers
-agent_server_ips="$agent_server_ips"
+agent_server_ips=$agent_server_ips
 db_server_ip=$db_server_ip
 guac_server_ip=$guac_server_ip
 web_server_ip=$web_server_ip
