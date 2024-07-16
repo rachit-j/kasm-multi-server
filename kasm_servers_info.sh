@@ -38,12 +38,13 @@ all:
               ansible_ssh_user: ubuntu
               ansible_ssh_private_key_file: $key_file
         zone1_agent:
+          hosts:
 EOF
 
 # Add agent server IPs
 index=1
 IFS=$'\n' # To handle each line as a separate entry
-for ip in $agent_server_ips; do
+for ip in "${agent_ips_array[@]}"; do # Remove quotation marks from inventory file: FLAGGED
   cat <<EOF >> inventory
             zone1_agent_$index:
               ansible_host: $ip  # Updated IP for KasmAgentServer
