@@ -8,7 +8,7 @@ chmod +x kasm_dependencies.sh
 chmod +x kasm_aws_instances.sh
 ./kasm_aws_instances.sh
 
-sleep 20
+sleep 300
 
 # Run the command execution script
 chmod +x kasm_servers_tools.sh
