@@ -1,0 +1,58 @@
+##################
+# Host inventory #
+##################
+all:
+  children:
+    zone1:
+      children:
+        zone1_db:
+          hosts:
+            zone1_db_1:
+              ansible_host: xx.xx.xx.xx  # Updated IP for KasmDBServer
+              ansible_port: xx
+              ansible_ssh_user: user
+              ansible_ssh_private_key_file: key.pem
+        zone1_web:
+          hosts:
+            zone1_web_1:
+              ansible_host: xx.xx.xx.xx  # Updated IP for KasmWebServer
+              ansible_port: xx
+              ansible_ssh_user: user
+              ansible_ssh_private_key_file: key.pem
+        zone1_agent:
+          hosts:
+            zone1_agent_1:
+              ansible_host: xx.xx.xx.xx  # Updated IP for KasmAgentServer
+              ansible_port: xx
+              ansible_ssh_user: user
+              ansible_ssh_private_key_file: key.pem
+        zone1_guac:
+          hosts:
+            zone1_guac_1:
+              ansible_host: xx.xx.xx.xx  # Updated IP for KasmGuacServer
+              ansible_port: xx
+              ansible_ssh_user: user
+              ansible_ssh_private_key_file: key.pem
+  vars: # These settings can be modified
+    default_web: 1
+    user_password: password
+    admin_password: password
+    database_password: password
+    redis_password: password
+    manager_token: password
+    registration_token: password
+    zones:
+      - zone1
+    proxy_port: 443
+    start_docker_on_boot: true
+    desired_swap_size: 3g
+    init_remote_db: false
+    database_hostname: false
+    database_user: kasmapp
+    database_name: kasm
+    database_port: 5432
+    database_ssl: true
+    redis_hostname: false
+    remote_backup_dir: /srv/backup/kasm/
+    retention_days: 10
+    reboot_timeout_seconds: 600

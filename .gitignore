@@ -10,5 +10,6 @@ backup/
 .envinputs
 .envservers
 *.pub
-inventory
+# inventory
 *.DS_Store
+save_*
