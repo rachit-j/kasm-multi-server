@@ -30,8 +30,8 @@ registration_token=${registration_token:-password}
 
 # Set default values if not provided
 agent_server_count=${agent_server_count:-1}
-agent_server_size=${agent_server_size:-"t3.medium"}
-other_server_size=${other_server_size:-"t3.medium"}
+agent_server_size=${agent_server_size:-"c5.xlarge"}
+other_server_size=${other_server_size:-"c5.xlarge"}
 agent_server_disk_size=${agent_server_disk_size:-50}
 other_server_disk_size=${other_server_disk_size:-50}
 
