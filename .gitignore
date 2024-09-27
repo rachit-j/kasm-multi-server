@@ -3,9 +3,12 @@ backup/
 # *.tar
 *.pem
 *.key
-.terraform
+*.terraform
 *.tfstate
 *.tfstate.backup
 *.terraform.lock.hcl
 .envinputs
 .envservers
+*.pub
+inventory
+*.DS_Store
