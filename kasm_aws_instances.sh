@@ -3,8 +3,8 @@
 # Prompt user for inputs
 read -p "Enter AWS region: " region
 read -p "Enter the number of agent servers (default 1): " agent_server_count
-read -p "Enter the size of agent servers (default t3.medium): " agent_server_size
-read -p "Enter the size of other servers (DB, Guac, Web) (default t3.medium): " other_server_size
+read -p "Enter the size of agent servers (default c5.xlarge): " agent_server_size
+read -p "Enter the size of other servers (DB, Guac, Web) (default c5.xlarge): " other_server_size
 read -p "Enter the disk size of agent servers in GB (default 50): " agent_server_disk_size
 read -p "Enter the disk size of other servers (DB, Guac, Web) in GB (default 50): " other_server_disk_size
 read -p "Enter custom AMI ID if region-specific AMI is not available (leave blank if not needed): " custom_ami
