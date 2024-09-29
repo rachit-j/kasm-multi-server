@@ -11,22 +11,22 @@ read -p "Enter custom AMI ID if region-specific AMI is not available (leave blan
 
 # Prompt user for passwords with default values
 read -p "Enter user password [default: password]: " user_password
-user_password=${user_password:-password}
+user_password=${user_password:-123Qwerty!}
 
 read -p "Enter admin password [default: password]: " admin_password
-admin_password=${admin_password:-password}
+admin_password=${admin_password:-123Qwerty!}
 
 read -p "Enter database password [default: password]: " database_password
-database_password=${database_password:-password}
+database_password=${database_password:-123Qwerty!}
 
 read -p "Enter redis password [default: password]: " redis_password
-redis_password=${redis_password:-password}
+redis_password=${redis_password:-123Qwerty!}
 
 read -p "Enter manager token [default: password]: " manager_token
-manager_token=${manager_token:-password}
+manager_token=${manager_token:-123Qwerty!}
 
 read -p "Enter registration token [default: password]: " registration_token
-registration_token=${registration_token:-password}
+registration_token=${registration_token:-123Qwerty!}
 
 # Set default values if not provided
 agent_server_count=${agent_server_count:-1}
