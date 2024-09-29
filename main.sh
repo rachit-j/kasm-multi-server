@@ -40,7 +40,8 @@ show_menu() {
   echo "6. Update Kasm"
   echo "7. Uninstall Kasm"
   echo "8. Uninstall Kasm and Delete the Instances"
-  echo "9. Exit"
+  echo "9. Force Delete Kasm (Delete Instances)"
+  echo "10. Exit"
   echo ""
   echo -n "Select: "
 }
@@ -108,6 +109,10 @@ while true; do
       terraform destroy -auto-approve
       ;;
     9)
+      echo "Force Delete Kasm"
+      terraform destroy -auto-approve
+      ;;
+    10)
       echo "Exiting..."
       break
       ;;
