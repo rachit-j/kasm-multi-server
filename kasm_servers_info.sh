@@ -76,7 +76,7 @@ cat <<EOF >> inventory
     registration_token: $registration_token
     zones:
       - zone1
-    proxy_port: 443
+    proxy_port: 8443
     start_docker_on_boot: true
     desired_swap_size: 3g
     init_remote_db: false
