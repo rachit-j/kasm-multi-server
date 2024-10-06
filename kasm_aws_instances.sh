@@ -10,22 +10,22 @@ read -p "Enter the disk size of other servers (DB, Guac, Web) in GB (default 50)
 read -p "Enter custom AMI ID if region-specific AMI is not available (leave blank if not needed): " custom_ami
 
 # Prompt user for passwords with default values
-read -p "Enter user password [default: password]: " user_password
+read -p "Enter user password [default: 123Qwerty!]: " user_password
 user_password=${user_password:-123Qwerty!}
 
-read -p "Enter admin password [default: password]: " admin_password
+read -p "Enter admin password [default: 123Qwerty!]: " admin_password
 admin_password=${admin_password:-123Qwerty!}
 
-read -p "Enter database password [default: password]: " database_password
+read -p "Enter database password [default: 123Qwerty!]: " database_password
 database_password=${database_password:-123Qwerty!}
 
-read -p "Enter redis password [default: password]: " redis_password
+read -p "Enter redis password [default: 123Qwerty!]: " redis_password
 redis_password=${redis_password:-123Qwerty!}
 
-read -p "Enter manager token [default: password]: " manager_token
+read -p "Enter manager token [default: 123Qwerty!]: " manager_token
 manager_token=${manager_token:-123Qwerty!}
 
-read -p "Enter registration token [default: password]: " registration_token
+read -p "Enter registration token [default: 123Qwerty!]: " registration_token
 registration_token=${registration_token:-123Qwerty!}
 
 # Set default values if not provided
